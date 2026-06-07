@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy Pipeline
 
 on:
   workflow_dispatch:   # manual trigger only
@@ -16,7 +16,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and Push
+      - name: Build and Push Image
         run: |
           docker build -t amruthaachar08/myapp:latest .
           docker push amruthaachar08/myapp:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.35.1
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl rollout restart deployment myapp-deployment
+          kubectl apply -f k8s/service.yaml
