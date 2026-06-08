@@ -42,8 +42,10 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          echo "🚀 Restarting deployment..."
+          echo "🚀 Updating deployment to latest image..."
           kubectl set image deployment/myapp-deployment myapp=amruthaachar08/myapp:latest --record
+          echo "📊 Checking rollout status..."
           kubectl rollout status deployment/myapp-deployment
           echo "🌐 Current service URL:"
-          kubectl get svc myapp-service -o jsonpath='{.spec.ports[0].nodePort}'
+          echo "http://$(minikube ip):$(kubectl get svc myapp-service -o jsonpath='{.spec.ports[0].nodePort}')"
+
