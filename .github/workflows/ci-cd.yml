@@ -1,4 +1,4 @@
-name: Build and Deploy Pipeline1
+name: Build and Deploy Pipeline2
 
 on:
   workflow_dispatch:   # manual trigger only
