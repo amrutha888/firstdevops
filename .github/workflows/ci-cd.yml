@@ -18,7 +18,9 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
+          echo "🔨 Building Docker image..."
           docker build -t amruthaachar08/myapp:latest .
+          echo "📦 Pushing Docker image..."
           docker push amruthaachar08/myapp:latest
 
   deploy:
@@ -35,11 +37,13 @@ jobs:
 
       - name: Configure Kubeconfig
         run: |
-          # For Minikube, you’ll need to export kubeconfig manually
-          # For cloud clusters (EKS/GKE/AKS), store kubeconfig in GitHub Secrets
+          echo "⚙️ Setting up kubeconfig..."
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl rollout restart deployment myapp-deployment
-          kubectl apply -f k8s/service.yaml
+          echo "🚀 Restarting deployment..."
+          kubectl set image deployment/myapp-deployment myapp=amruthaachar08/myapp:latest --record
+          kubectl rollout status deployment/myapp-deployment
+          echo "🌐 Current service URL:"
+          kubectl get svc myapp-service -o jsonpath='{.spec.ports[0].nodePort}'
