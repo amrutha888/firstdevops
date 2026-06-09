@@ -22,31 +22,3 @@ jobs:
           docker build -t amruthaachar08/myapp:latest .
           echo "📦 Pushing Docker image..."
           docker push amruthaachar08/myapp:latest
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: v1.35.1
-
-      - name: Configure Kubeconfig
-        run: |
-          echo "⚙️ Setting up kubeconfig..."
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-
-      - name: Deploy to Kubernetes
-        run: |
-          echo "🚀 Updating deployment to latest image..."
-          kubectl set image deployment/myapp-deployment myapp=amruthaachar08/myapp:latest --record
-          echo "📊 Checking rollout status..."
-          kubectl rollout status deployment/myapp-deployment
-          echo "🌐 Current service URL:"
-          echo "http://$(minikube ip):$(kubectl get svc myapp-service -o jsonpath='{.spec.ports[0].nodePort}')"
-
