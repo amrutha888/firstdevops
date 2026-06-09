@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-  res.send('Hello World! from the manual CICD trigger, without K8s commands. ');
+  res.send('Hello World! from the manual CICD trigger, with K8s commands in cmd. ');
 });
 
 app.listen(port, () => {
